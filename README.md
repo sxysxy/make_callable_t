@@ -73,7 +73,7 @@ bash build.sh
 With CUDA:
 
 ```bash
-build_with_cud.sh
+bash build_with_cuda.sh
 ```
 
 ## LICENSE
