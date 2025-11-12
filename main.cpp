@@ -1,4 +1,5 @@
 #include <iostream>
+#include <type_traits>
 #include "make_callable_t.hpp"
 
 class Foo {
@@ -15,12 +16,28 @@ public:
 int add(int x, int y) {
     return x + y;
 }
+
+#ifdef BUILD_WITH_CUDA
+void test_cuda_cap();
+#endif
+
     
 int main() {
-    using Foobar = make_callable_t<&Foo::bar>;
+
+    static_assert(std::is_base_of<Foo, make_callable_t<&Foo::bar>>::value);
+    static_assert(std::is_convertible<Foo, make_callable_t<&Foo::bar>>::value);
+    static_assert(std::is_convertible<make_callable_t<&Foo::bar>, Foo>::value);
+
     Foo a(1);
-    Foobar b(a);
+    make_callable_t<&Foo::bar> b(a);
+    b();
+
     using Add = make_callable_t<&add>;
     std::cout << Add()(1,2) << std::endl;
+
+#ifdef BUILD_WITH_CUDA
+    test_cuda_cap();
+#endif
+
     return 0;
 }
